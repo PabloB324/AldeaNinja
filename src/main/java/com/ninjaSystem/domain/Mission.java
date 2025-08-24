@@ -20,7 +20,7 @@ public class Mission {
     public int getReward() { return reward; }
     public Rank getRequiredRank() { return requiredRank; }
 
-    // 🔑 Método para Visitor
+    // Método para Visitor
     public void accept(ExportVisitor visitor) {
         visitor.visit(this);
     }
