@@ -139,10 +139,8 @@ public class InteractiveMain {
     }
     
     private static void performTraining(Ninja ninja) {
-        System.out.println("\n¿Qué tipo de entrenamiento deseas realizar?");
-        System.out.println("1. Entrenamiento básico (+1 ATK, +1 DEF, +2 CHK)");
-        System.out.println("2. Entrenamiento avanzado (+3 ATK, +2 DEF, +5 CHK)");
-        System.out.print("Selecciona el tipo de entrenamiento: ");
+        System.out.println("\n¿Qué tipo de entrenamiento deseas realizar?\n1. Entrenamiento básico (+1 ATK, +1 DEF, +2 CHK\n" + 
+            "2. Entrenamiento avanzado (+3 ATK, +2 DEF, +5 CHK)\nSelecciona el tipo de entrenamiento: ");
         
         int trainingChoice = getIntInput();
         
@@ -161,7 +159,7 @@ public class InteractiveMain {
     
     private static Ninja selectRandomOpponent(Ninja selectedNinja) {
         List<Ninja> opponents = new ArrayList<>(availableNinjas);
-        opponents.remove(selectedNinja); // Quitar el ninja seleccionado de los oponentes
+        opponents.remove(selectedNinja);
         
         Random random = new Random();
         return opponents.get(random.nextInt(opponents.size()));
