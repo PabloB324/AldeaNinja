@@ -19,7 +19,7 @@ public class InteractiveMain {
         
         boolean continueGame = true;
         while (continueGame) {
-            showMainMenu();
+            showMenu();
             int choice = getIntInput();
             
             switch (choice) {
@@ -69,12 +69,9 @@ public class InteractiveMain {
         availableNinjas.add(kumo.createNinja("Ay", Rank.JONIN));
     }
     
-    private static void showMainMenu() {
-        System.out.println("\n═══ MENÚ PRINCIPAL ═══");
-        System.out.println("1. Entrenar ninja y combatir");
-        System.out.println("2. Ver todos los ninjas disponibles");
-        System.out.println("3. Salir");
-        System.out.print("Selecciona una opción: ");
+    private static void showMenu() {
+        System.out.println("\n═══ MENÚ PRINCIPAL ═══\n1. Entrenar ninja y combatir\n2. Ver todos los ninjas disponibles\n" + 
+            "3. Salir\nSelecciona una opción: ");
     }
     
     private static void startTrainingAndBattle() {
