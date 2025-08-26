@@ -1,5 +1,7 @@
 package com.ninjaSystem.services;
 
+import com.ninjaSystem.domain.Mission;
+import com.ninjaSystem.domain.MissionRank;
 import com.ninjaSystem.domain.Ninja;
 import com.ninjaSystem.domain.Rank;
 import com.ninjaSystem.patterns.factory.*;
@@ -10,12 +12,14 @@ public class InteractiveMain {
     private static Scanner scanner = new Scanner(System.in);
     private static List<Ninja> availableNinjas = new ArrayList<>();
     private static TrainingService trainingService = new TrainingService();
+    private static List<Mission> availableMissions = new ArrayList<>();
     
     public static void main(String[] args) {
         System.out.println("--- ¡Bienvenido al Sistema de Entrenamiento y Combate Ninja! ---");
         System.out.println("═══════════════════════════════════════════════════════════════");
         
         initializeNinjas();
+        initializeMissions();
         
         boolean continueGame = true;
         while (continueGame) {
@@ -30,6 +34,9 @@ public class InteractiveMain {
                     showAllNinjas();
                     break;
                 case 3:
+                    selectMissionForNinja();
+                    break;
+                case 4:
                     continueGame = false;
                     System.out.println("--- ¡Gracias por usar el Sistema Ninja! ¡Hasta la próxima! ---");
                     break;
@@ -68,12 +75,187 @@ public class InteractiveMain {
         availableNinjas.add(kumo.createNinja("Killer Bee", Rank.JONIN));
         availableNinjas.add(kumo.createNinja("Ay", Rank.JONIN));
     }
-    
+
+    private static void initializeMissions() {
+        System.out.println("Inicializando misiones disponibles...\n");
+        
+        // Crear misiones de ejemplo
+        availableMissions.add(new Mission("Rescate del Gato Perdido", MissionRank.D, 100, Rank.GENIN));
+        availableMissions.add(new Mission("Escolta de Mercaderes", MissionRank.C, 300, Rank.CHUNIN));
+        availableMissions.add(new Mission("Infiltración Enemiga", MissionRank.A, 800, Rank.JONIN));
+        availableMissions.add(new Mission("Caza de Bandidos", MissionRank.B, 500, Rank.CHUNIN));
+        availableMissions.add(new Mission("Protección del Hokage", MissionRank.S, 1000, Rank.JONIN));
+        availableMissions.add(new Mission("Entrega de Mensaje", MissionRank.D, 150, Rank.GENIN));
+    }
+
     private static void showMenu() {
         System.out.println("\n═══ MENÚ PRINCIPAL ═══\n1. Entrenar ninja y combatir\n2. Ver todos los ninjas disponibles\n" + 
-            "3. Salir\nSelecciona una opción: ");
+            "3. Enviar ninja a mision\n4. Salir\nSelecciona una opción: ");
     }
     
+    private static void selectMissionForNinja() {
+        System.out.println("\n¡Es hora de enviar un ninja a una misión!");
+        System.out.println("═══════════════════════════════════════");
+        
+        // Seleccionar ninja
+        Ninja selectedNinja = selectNinja();
+        if (selectedNinja == null) return;
+        
+        System.out.println("\nNinja seleccionado: " + selectedNinja.getName() + 
+                          " (Rango: " + selectedNinja.getRank() + ")");
+        
+        // Seleccionar misión
+        Mission selectedMission = selectMission();
+        if (selectedMission == null) return;
+        
+        // Verificar si el ninja puede realizar la misión
+        if (canNinjaDoMission(selectedNinja, selectedMission)) {
+            executeMission(selectedNinja, selectedMission);
+        } else {
+            System.out.println(selectedNinja.getName() + 
+                             " no tiene el rango suficiente para esta misión.");
+            System.out.println("Rango requerido: " + selectedMission.getRequiredRank());
+            System.out.println("Rango del ninja: " + selectedNinja.getRank());
+        }
+    }
+    
+    private static Mission selectMission() {
+        System.out.println("\nSelecciona la misión que deseas asignar:");
+        System.out.println("════════════════════════════════════════");
+
+        for (int i = 0; i < availableMissions.size(); i++) {
+            Mission mission = availableMissions.get(i);
+            System.out.printf("%d. %s\n", i + 1, mission.getName());
+            System.out.printf("   Rango requerido: %s\n", mission.getRequiredRank());
+            System.out.printf("   Recompensa: %d monedas\n\n", mission.getReward());
+        }
+        
+        System.out.print("Elige una misión (1-" + availableMissions.size() + "): ");
+        int choice = getIntInput();
+        
+        if (choice >= 1 && choice <= availableMissions.size()) {
+            return availableMissions.get(choice - 1);
+        } else {
+            System.out.println("Selección inválida.");
+            return null;
+        }
+    }
+    
+    private static boolean canNinjaDoMission(Ninja ninja, Mission mission) {
+        // Verificar si el rango del ninja es suficiente para la misión
+        Rank ninjaRank = ninja.getRank();
+        Rank requiredRank = mission.getRequiredRank();
+        
+        // Orden de rangos: GENIN < CHUNIN < JONIN
+        return getRankValue(ninjaRank) >= getRankValue(requiredRank);
+    }
+    
+    private static int getRankValue(Rank rank) {
+        switch (rank) {
+            case GENIN: return 1;
+            case CHUNIN: return 2;
+            case JONIN: return 3;
+            default: return 0;
+        }
+    }
+    
+    private static void executeMission(Ninja ninja, Mission mission) {
+        System.out.println("¡Misión asignada con éxito!");
+        System.out.println("═══════════════════════════════");
+        System.out.println("Ninja: " + ninja.getName());
+        System.out.println("Misión: " + mission.getName());
+        
+        // Simular progreso de la misión
+        System.out.println("\nEjecutando misión...");
+        simulateMissionProgress();
+        
+        // Calcular probabilidad de éxito basada en las estadísticas del ninja
+        boolean success = calculateMissionSuccess(ninja, mission);
+        
+        if (success) {
+            System.out.println("\n¡MISIÓN COMPLETADA CON ÉXITO!");
+            System.out.println("═══════════════════════════════════");
+            System.out.println(ninja.getName() + " ha completado la misión: " + mission.getName());
+            System.out.println("Recompensa obtenida: " + mission.getReward() + " monedas");
+            
+            // Dar experiencia adicional
+            System.out.println("\nExperiencia ganada:");
+            giveExperienceForMission(ninja, mission);
+        } else {
+            System.out.println("\nMISIÓN FALLIDA");
+            System.out.println("══════════════════");
+            System.out.println(ninja.getName() + " no pudo completar la misión: " + mission.getName());
+            System.out.println("No se obtuvo recompensa, pero ganó algo de experiencia.");
+            
+            // Dar experiencia reducida por el intento
+            giveFailureExperience(ninja);
+        }
+    }
+    
+    private static void simulateMissionProgress() {
+        String[] progressMessages = {
+            "Preparando equipo...",
+            "Saliendo de la aldea...",
+            "Llegando al destino...",
+            "Ejecutando plan...",
+            "Completando objetivos..."
+        };
+        
+        try {
+            for (String message : progressMessages) {
+                System.out.println(message);
+                Thread.sleep(800); // Pausa de 0.8 segundos
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+    
+    private static boolean calculateMissionSuccess(Ninja ninja, Mission mission) {
+        // Calcular probabilidad basada en estadísticas del ninja
+        int totalStats = ninja.getStats().getAttack() + 
+                        ninja.getStats().getDefense() + 
+                        ninja.getStats().getChakra();
+        
+        // Base de probabilidad según el rango de la misión
+        double baseSuccessRate = switch (mission.getRequiredRank()) {
+            case GENIN -> 0.8;
+            case CHUNIN -> 0.6;
+            case JONIN -> 0.4;
+        };
+        
+        // Bonificación por estadísticas altas
+        double statBonus = Math.min(totalStats / 1000.0, 0.3); // Máximo 30% de bonus
+        
+        double finalSuccessRate = baseSuccessRate + statBonus;
+        finalSuccessRate = Math.min(finalSuccessRate, 0.95); // Máximo 95% de éxito
+        
+        Random random = new Random();
+        return random.nextDouble() < finalSuccessRate;
+    }
+    
+    private static void giveExperienceForMission(Ninja ninja, Mission mission) {
+        int expGain = switch (mission.getRequiredRank()) {
+            case GENIN -> 2;
+            case CHUNIN -> 4;
+            case JONIN -> 6;
+        };
+        
+        // Aplicar entrenamiento básico múltiples veces para simular experiencia
+        for (int i = 0; i < expGain; i++) {
+            trainingService.basicTraining(ninja);
+        }
+        
+        System.out.println("+" + expGain + " puntos de experiencia aplicados");
+        showNinjaStats(ninja, "Estadísticas actualizadas");
+    }
+    
+    private static void giveFailureExperience(Ninja ninja) {
+        // Dar experiencia mínima por el intento
+        trainingService.basicTraining(ninja);
+        System.out.println("+1 punto de experiencia por el intento");
+    }
+
     private static void startTrainingAndBattle() {
         System.out.println("\n¡Es hora de entrenar y combatir!");
         System.out.println("═══════════════════════════════════");
@@ -82,21 +264,16 @@ public class InteractiveMain {
         Ninja selectedNinja = selectNinja();
         if (selectedNinja == null) return;
         
-        // Mostrar estadísticas iniciales
         showNinjaStats(selectedNinja, "Estadísticas iniciales");
         
-        // Preguntar tipo de entrenamiento
         performTraining(selectedNinja);
         
-        // Mostrar estadísticas después del entrenamiento
         showNinjaStats(selectedNinja, "Estadísticas después del entrenamiento");
         
-        // Seleccionar oponente aleatorio
         Ninja opponent = selectRandomOpponent(selectedNinja);
         System.out.println("\n¡Tu oponente ha sido seleccionado aleatoriamente!");
         showNinjaStats(opponent, "Tu oponente");
         
-        // Simular combate
         System.out.println("\n¡COMIENZA EL COMBATE!");
         System.out.println("═══════════════════════");
         
@@ -109,13 +286,12 @@ public class InteractiveMain {
             System.out.println(selectedNinja.getName() + " ha perdido contra " + opponent.getName());
         }
         
-        // Preguntar si quiere ver el reporte
         askForReport(selectedNinja, opponent);
     }
     
     private static Ninja selectNinja() {
-        System.out.println("\nSelecciona tu ninja para entrenar:");
-        System.out.println("═══════════════════════════════════");
+        System.out.println("\nSelecciona tu ninja:");
+        System.out.println("══════════════════════");
         
         for (int i = 0; i < availableNinjas.size(); i++) {
             Ninja ninja = availableNinjas.get(i);

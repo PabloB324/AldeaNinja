@@ -8,6 +8,7 @@ public class Jutsu {
         this.name = name;
         this.chakraCost = chakraCost;
     }
+    
     public String getName(){
         return name;
     }

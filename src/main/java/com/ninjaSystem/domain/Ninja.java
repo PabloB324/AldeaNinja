@@ -20,25 +20,22 @@ public class Ninja {
         this.jutsus = new ArrayList<>(jutsus);
     }
 
-    public String getName() { return name; }
-    public Rank getRank() { return rank; }
-    public Village getVillage() { return village; }
-    public Stats getStats() { return stats; }
-    public List<Jutsu> getJutsus() { return Collections.unmodifiableList(jutsus); }
-
-    // Entrenamiento
-    public void train() {
-        stats.train(1, 1, 2);
+    public String getName() { 
+        return name; 
+    }
+    public Rank getRank() { 
+        return rank; 
+    }
+    public Village getVillage() { 
+        return village; 
+    }
+    public Stats getStats() { 
+        return stats; 
+    }
+    public List<Jutsu> getJutsus() { 
+        return Collections.unmodifiableList(jutsus); 
     }
 
-    // Combate simple
-    public Ninja simulateCombat(Ninja opponent) {
-        int myPower = stats.getAttack() + stats.getDefense() + stats.getChakra() / 2;
-        int opPower = opponent.stats.getAttack() + opponent.stats.getDefense() + opponent.stats.getChakra() / 2;
-        return (myPower >= opPower) ? this : opponent;
-    }
-
-    // 🔑 Método para Visitor
     public void accept(ExportVisitor visitor) {
         visitor.visit(this);
     }

@@ -9,6 +9,7 @@ public class Stats {
         this.defense = defense;
         this.chakra = chakra;
     }
+    
     public int getAttack(){
         return attack;
     }
@@ -18,6 +19,7 @@ public class Stats {
     public int getChakra(){
         return chakra;
     }
+
     public void train(int atkInc, int defInc, int chakraInc){
         this.attack += atkInc;
         this.defense += defInc;

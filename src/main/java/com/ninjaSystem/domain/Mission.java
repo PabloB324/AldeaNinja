@@ -15,12 +15,19 @@ public class Mission {
         this.requiredRank = requiredRank;
     }
 
-    public String getName() { return name; }
-    public MissionRank getRank() { return rank; }
-    public int getReward() { return reward; }
-    public Rank getRequiredRank() { return requiredRank; }
+    public String getName() { 
+        return name; 
+    }
+    public MissionRank getRank() { 
+        return rank; 
+    }
+    public int getReward() { 
+        return reward; 
+    }
+    public Rank getRequiredRank() { 
+        return requiredRank; 
+    }
 
-    // Método para Visitor
     public void accept(ExportVisitor visitor) {
         visitor.visit(this);
     }
